@@ -113,15 +113,3 @@ class MaxUnpooling2D(Layer):
             'size': self.size,
         })
         return config
-
-
-if __name__ == "__main__":
-    images = load_sample_images()["images"]
-    images = tf.keras.layers.experimental.preprocessing.Rescaling(scale=1 / 255)(images)
-
-    max_layer = MaxPoolingWithArgmax2D()
-    unpool_layer = MaxUnpooling2D()
-    x, i = max_layer(images)
-    print(x.shape)
-    x = unpool_layer([x, i])
-    print(x.shape)
