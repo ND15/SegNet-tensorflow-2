@@ -1,11 +1,11 @@
 from abc import ABC
-
+import sys
 import tensorflow as tf
 from tensorflow import keras
 from keras.models import Model
 from keras.layers import Conv2D, BatchNormalization, Activation, Dense
 
-from ..segnet.layers import MaxPoolingWithArgmax2D, MaxUnpooling2D, EncoderDecoder
+from segnet.layers import MaxPoolingWithArgmax2D, MaxUnpooling2D, EncoderDecoder
 
 
 class SegNet(Model, ABC):
@@ -56,7 +56,6 @@ class SegNet(Model, ABC):
 
     def call(self, inputs):
         x = inputs
-
         for i in range(len(self.encoder_blocks)):
             x = self.encoder[i](x)
             x, mask = self.max_pooling[i](x)

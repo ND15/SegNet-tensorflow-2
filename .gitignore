@@ -1,3 +1,4 @@
 test/
 segnet/__pycache__/
 testing/__pycache__/
+dataset/__pycache__/
