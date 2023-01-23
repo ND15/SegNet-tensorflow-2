@@ -1,7 +1,4 @@
-from sklearn.datasets import load_sample_images
-import tensorflow as tf
-
-from ..segnet.model import SegNet
+from segnet.model import SegNet
 
 # build model on batch size of 10 and image size 224x224x3
 model = SegNet(12)

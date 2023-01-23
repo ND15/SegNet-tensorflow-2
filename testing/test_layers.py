@@ -1,7 +1,7 @@
 import tensorflow as tf
 from sklearn.datasets import load_sample_images
-from ..segnet.layers import MaxPoolingWithArgmax2D, MaxUnpooling2D
-from ..segnet.layers import ConvolutionBlock, EncoderDecoder
+from segnet.layers import MaxPoolingWithArgmax2D, MaxUnpooling2D
+from segnet.layers import ConvolutionBlock, EncoderDecoder
 
 images = load_sample_images()["images"]
 images = tf.keras.layers.experimental.preprocessing.Rescaling(scale=1 / 255)(images)
