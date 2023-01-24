@@ -9,11 +9,24 @@ import pickle
 import tensorflow as tf
 
 
+def parse_image(img, resize=(224, 224)):
+    img = tf.io.read_file(img)
+    img = tf.image.decode_png(img)
+    if resize:
+        img = tf.image.resize(img, resize)
+    return img
+
+
 def create_labels(labels):
     x = np.zeros([labels.shape[0], labels.shape[1], 12])
+    labels = tf.cast(labels, tf.int32)
+    labels = labels.numpy()
+    print(labels.max())
+
     for i in range(labels.shape[0]):
         for j in range(labels.shape[1]):
             x[i, j, labels[i][j]] = 1
+    x = tf.cast(x, dtype=tf.float32)
     return x
 
 
@@ -21,9 +34,19 @@ def create_sets(image_list, mask_list):
     images = []
     masks = []
 
+    if not mask_list:
+        for img in image_list:
+            img = parse_image(img, resize=(224, 224))
+            img = img / 255.0
+            images.append(img)
+        return np.array(images), []
+
     for img, mask in zip(image_list, mask_list):
-        images.append(cv2.resize(cv2.imread(img), (224, 224)))  # 224X224
-        masks.append(create_labels(cv2.resize(cv2.imread(mask), (224, 224))))
+        img = parse_image(img, resize=(224, 224))
+        img = img / 255.0
+        mask = parse_image(mask, resize=(224, 224))
+        images.append(img)  # 224X224
+        masks.append(create_labels(mask))
 
     images = np.array(images)
     masks = np.array(masks)
@@ -69,7 +92,7 @@ class DataSet:
 
         print(f'Processed {len(self.training_images)} training images.')
         print(f'Processed {len(self.valid_images)} validation set images.')
-        print(f'Processed {len(self.valid_images)} testing set images.')
+        print(f'Processed {len(self.test_images)} testing set images.')
 
         return {
             'train': [self.X_train, self.y_train],

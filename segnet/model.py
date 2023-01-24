@@ -1,4 +1,6 @@
 from abc import ABC
+
+import keras.layers
 from keras.models import Model
 from keras.layers import Conv2D, BatchNormalization, Activation, Dense
 
@@ -65,7 +67,6 @@ class SegNet(Model, ABC):
         x = self.conv_layer(x)
         x = self.batch_norm(x)
         x = self.output_dense(x)
-        print(x)
         x = self.output_activation(x)
 
         return x
