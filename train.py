@@ -3,6 +3,10 @@ import argparse
 from dataset.data import DataSet
 from segnet.model import SegNet
 
+import tensorflow as tf
+
+tf.compat.v1.disable_eager_execution()
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--path', type=str, required=True, help='Path to dataset')
 parser.add_argument('--batch-size', type=int, default=10, help='Batch size')
@@ -17,19 +21,22 @@ def train(path_to_dir=None,
           n_labels=12):
     data = DataSet(path_to_dir=path_to_dir)
     data_set = data.create_dataset()
-    X_train = data_set['train'][0].astype('float')
-    y_train = data_set['train'][1].astype('float')
+    X_train = data_set['train'][0]
+    y_train = data_set['train'][1]
 
-    X_val = data_set['val'][0].astype('float')
-    y_val = data_set['val'][1].astype('float')
+    X_val = data_set['val'][0]
+    y_val = data_set['val'][1]
 
-    X_test = data_set['test'][0].astype('float')
-    y_test = data_set['test'][1].astype('float')
+    X_test = data_set['test'][0]
+    y_test = data_set['test'][1]
 
     # TODO test test set
     model = SegNet(output_dim=n_labels)
     model.compile(loss="categorical_crossentropy", optimizer=optimizer, metrics=['acc'])
-    history = model.fit(X_train, y_train, epochs=epochs, validation_data=[X_val, y_val], batch_size=batch_size,
+    model.build(input_shape=(10, 224, 224, 3))
+    model.summary()
+    history = model.fit(X_train, y_train, epochs=epochs, validation_data=[X_val, y_val],
+                        batch_size=batch_size,
                         shuffle=True)
     return history
 
