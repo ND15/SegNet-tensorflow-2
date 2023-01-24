@@ -9,10 +9,33 @@ import pickle
 import tensorflow as tf
 
 
+def create_labels(labels):
+    x = np.zeros([labels.shape[0], labels.shape[1], 12])
+    for i in range(labels.shape[0]):
+        for j in range(labels.shape[1]):
+            x[i, j, labels[i][j]] = 1
+    return x
+
+
+def create_sets(image_list, mask_list):
+    images = []
+    masks = []
+
+    for img, mask in zip(image_list, mask_list):
+        images.append(cv2.resize(cv2.imread(img), (224, 224)))  # 224X224
+        masks.append(create_labels(cv2.resize(cv2.imread(mask), (224, 224))))
+
+    images = np.array(images)
+    masks = np.array(masks)
+    return images, masks
+
+
 class DataSet:
     def __init__(self,
                  path_to_dir=''
                  ):
+        self.X_train, self.X_val, self.X_test = None, None, None
+        self.y_train, self.y_val, self.y_test = None, None, None
         self.path_to_dir = path_to_dir
 
         # train, val and test paths
@@ -38,11 +61,18 @@ class DataSet:
 
         assert len(self.training_images) == len(self.training_images_labels), "Incomplete Labels or training images"
         assert len(self.valid_images) == len(self.valid_images_labels), "Incomplete Labels or valid images"
-        self.create_dataset()
-        return
 
     def create_dataset(self):
-        # TODO
+        self.X_train, self.y_train = create_sets(self.training_images, self.training_images_labels)
+        self.X_val, self.y_val = create_sets(self.valid_images, self.valid_images_labels)
+        self.X_test, self.y_test = create_sets(self.test_images, self.test_images_labels)
+
         print(f'Processed {len(self.training_images)} training images.')
         print(f'Processed {len(self.valid_images)} validation set images.')
         print(f'Processed {len(self.valid_images)} testing set images.')
+
+        return {
+            'train': [self.X_train, self.y_train],
+            'val': [self.X_val, self.y_val],
+            'test': [self.X_test, self.y_test]
+        }
