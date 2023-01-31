@@ -11,25 +11,8 @@ import tensorflow as tf
 tf.compat.v1.disable_eager_execution()
 
 
-def to_numpy(image, dtype=tf.int32):
-    with tf.compat.v1.Session() as sess:
-        image = tf.cast(image, dtype)
-        result = sess.run(image)
-    return result
-
-
-def parse_image(img, resize=(224, 224)):
-    img = tf.io.read_file(img)
-    img = tf.image.decode_png(img)
-    if resize:
-        img = tf.image.resize(img, resize)
-    return img
-
-
-def create_labels(labels):
+def binary_lab(labels):
     x = np.zeros([labels.shape[0], labels.shape[1], 12])
-    labels = to_numpy(labels)
-
     for i in range(labels.shape[0]):
         for j in range(labels.shape[1]):
             x[i, j, labels[i][j]] = 1
@@ -40,25 +23,12 @@ def create_sets(image_list, mask_list):
     images = []
     masks = []
 
-    if not mask_list:
-        for img in image_list:
-            img = parse_image(img, resize=(224, 224))
-            img = img / 255.0
-            img = to_numpy(img, tf.float32)
-            images.append(img)
-        return np.array(images), []
-
     for img, mask in zip(image_list, mask_list):
-        img = parse_image(img, resize=(224, 224))
-        img = img / 255.0
-        img = to_numpy(img, tf.float32)
+        images.append(cv2.resize(cv2.imread(img), (224, 224)))  # 224X224
+        masks.append(binary_lab(cv2.resize(cv2.imread(mask), (224, 224))))
 
-        mask = parse_image(mask, resize=(224, 224))
-        images.append(img)  # 224X224
-        masks.append(create_labels(mask))
-
-    images = np.array(images)
-    masks = np.array(masks)
+    images = np.array(images, dtype='float')
+    masks = np.array(masks, dtype='float')
     return images, masks
 
 
@@ -79,7 +49,7 @@ class DataSet:
         # annotated files path
         self.train_label_path = self.path_to_dir + 'trainannot/'
         self.val_label_path = self.path_to_dir + 'valannot/'
-        self.test_label_path = self.path_to_dir + 'valannot'
+        self.test_label_path = self.path_to_dir + 'testannot/'
 
         # load filenames
         self.training_images = sorted(glob(self.training_set + '*.png'))
