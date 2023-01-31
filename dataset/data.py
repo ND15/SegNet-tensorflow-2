@@ -8,6 +8,15 @@ from random import randint, sample
 import pickle
 import tensorflow as tf
 
+tf.compat.v1.disable_eager_execution()
+
+
+def to_numpy(image, dtype=tf.int32):
+    with tf.compat.v1.Session() as sess:
+        image = tf.cast(image, dtype)
+        result = sess.run(image)
+    return result
+
 
 def parse_image(img, resize=(224, 224)):
     img = tf.io.read_file(img)
@@ -19,14 +28,11 @@ def parse_image(img, resize=(224, 224)):
 
 def create_labels(labels):
     x = np.zeros([labels.shape[0], labels.shape[1], 12])
-    labels = tf.cast(labels, tf.int32)
-    labels = labels.numpy()
-    print(labels.max())
+    labels = to_numpy(labels)
 
     for i in range(labels.shape[0]):
         for j in range(labels.shape[1]):
             x[i, j, labels[i][j]] = 1
-    x = tf.cast(x, dtype=tf.float32)
     return x
 
 
@@ -38,12 +44,15 @@ def create_sets(image_list, mask_list):
         for img in image_list:
             img = parse_image(img, resize=(224, 224))
             img = img / 255.0
+            img = to_numpy(img, tf.float32)
             images.append(img)
         return np.array(images), []
 
     for img, mask in zip(image_list, mask_list):
         img = parse_image(img, resize=(224, 224))
         img = img / 255.0
+        img = to_numpy(img, tf.float32)
+
         mask = parse_image(mask, resize=(224, 224))
         images.append(img)  # 224X224
         masks.append(create_labels(mask))
@@ -86,6 +95,7 @@ class DataSet:
         assert len(self.valid_images) == len(self.valid_images_labels), "Incomplete Labels or valid images"
 
     def create_dataset(self):
+        print("Started")
         self.X_train, self.y_train = create_sets(self.training_images, self.training_images_labels)
         self.X_val, self.y_val = create_sets(self.valid_images, self.valid_images_labels)
         self.X_test, self.y_test = create_sets(self.test_images, self.test_images_labels)

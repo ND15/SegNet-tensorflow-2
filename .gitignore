@@ -2,3 +2,4 @@ test/
 segnet/__pycache__/
 testing/__pycache__/
 dataset/__pycache__/
+segnet/model2.py
