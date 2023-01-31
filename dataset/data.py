@@ -9,7 +9,7 @@ import pickle
 import tensorflow as tf
 
 
-def create_labels(labels):
+def binary_lab(labels):
     x = np.zeros([labels.shape[0], labels.shape[1], 12])
     for i in range(labels.shape[0]):
         for j in range(labels.shape[1]):
@@ -23,10 +23,10 @@ def create_sets(image_list, mask_list):
 
     for img, mask in zip(image_list, mask_list):
         images.append(cv2.resize(cv2.imread(img), (224, 224)))  # 224X224
-        masks.append(create_labels(cv2.resize(cv2.imread(mask), (224, 224))))
+        masks.append(binary_lab(cv2.resize(cv2.imread(mask), (224, 224))))
 
-    images = np.array(images)
-    masks = np.array(masks)
+    images = np.array(images, dtype='float')
+    masks = np.array(masks, dtype='float')
     return images, masks
 
 
@@ -47,7 +47,7 @@ class DataSet:
         # annotated files path
         self.train_label_path = self.path_to_dir + 'trainannot/'
         self.val_label_path = self.path_to_dir + 'valannot/'
-        self.test_label_path = self.path_to_dir + 'valannot'
+        self.test_label_path = self.path_to_dir + 'testannot/'
 
         # load filenames
         self.training_images = sorted(glob(self.training_set + '*.png'))

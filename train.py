@@ -17,14 +17,14 @@ def train(path_to_dir=None,
           n_labels=12):
     data = DataSet(path_to_dir=path_to_dir)
     data_set = data.create_dataset()
-    X_train = data_set['train'][0].astype('float')
-    y_train = data_set['train'][1].astype('float')
+    X_train = data_set['train'][0]
+    y_train = data_set['train'][1]
 
-    X_val = data_set['val'][0].astype('float')
-    y_val = data_set['val'][1].astype('float')
+    X_val = data_set['val'][0]
+    y_val = data_set['val'][1]
 
-    X_test = data_set['test'][0].astype('float')
-    y_test = data_set['test'][1].astype('float')
+    X_test = data_set['test'][0]
+    y_test = data_set['test'][1]
 
     # TODO test test set
     model = SegNet(output_dim=n_labels)

@@ -1,4 +1,5 @@
 from abc import ABC
+import tensorflow as tf
 from keras.models import Model
 from keras.layers import Conv2D, BatchNormalization, Activation, Dense
 
