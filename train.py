@@ -26,10 +26,13 @@ def train(path_to_dir=None,
     X_test = data_set['test'][0]
     y_test = data_set['test'][1]
 
+    X_train = np.concatenate([X_train, X_val])
+    y_train = np.concatenate([y_train, y_val])
+
     # TODO test test set
     model = SegNet(output_dim=n_labels)
     model.compile(loss="categorical_crossentropy", optimizer=optimizer, metrics=['acc'])
-    history = model.fit(X_train, y_train, epochs=epochs, validation_data=[X_val, y_val], batch_size=batch_size,
+    history = model.fit(X_train, y_train, epochs=epochs, validation_split=0.1, batch_size=batch_size,
                         shuffle=True)
     return history
 
