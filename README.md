@@ -4,7 +4,11 @@ Link: https://arxiv.org/abs/1511.00561
 
 #### Architecture
 ![Alt text](images/arch.png?raw=true "Title")
+
 ### Tests and Results
+#### Run Notebook 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1gl1lBNsKch_NkER1vpPsjTkVE-c4j3hn?usp=sharing)
+
 | Optimizer | Time(s)/batch |
 |:---------:|:-------------:|
 |    SGD    |      30       |
