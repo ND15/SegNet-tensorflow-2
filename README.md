@@ -14,6 +14,9 @@ Link: https://arxiv.org/abs/1511.00561
 |    SGD    |      30       |
 |   Adam    |      23       |
 
+#### Demo Video
+All the frames are resized into 224x224 size. Link to the video [demo.mp4](images/demo_video.mp4)
+
 ### Dependencies
 |  Package   | Version |
 |:----------:|:-------:|
